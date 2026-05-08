@@ -42,7 +42,7 @@ def load_data():
     # Start_Date
     # Content_Type
     # Product
-    # Cost
+    # Cost_(INR)
     # Leads
     # Quality_Lead_Pct
     # Total_converts
@@ -80,7 +80,7 @@ content_filter = st.sidebar.multiselect(
 
 filtered_df = df[
     (df["Product"].isin(product_filter)) &
-    (Content_type.isin(content_filter))
+    (df["Content_type"].isin(content_filter))
 ]
 
 # -----------------------------
@@ -94,7 +94,7 @@ col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
     st.metric(
         "Total Spend",
-        f"₹{filtered_df['Cost'].sum():,.0f}"
+        f"₹{filtered_df['Cost_(INR)'].sum():,.0f}"
     )
 
 with col2:
@@ -105,8 +105,8 @@ with col2:
 
 with col3:
     portfolio_roi = (
-        (filtered_df['Total_Sales_Premiums_(INR)'].sum() - filtered_df['Cost'].sum())
-       # / filtered_df['Cost'].sum()
+        (filtered_df['Total_Sales_Premiums_(INR)'].sum() - filtered_df['Cost_(INR)'].sum())
+       # / filtered_df['Cost_(INR)'].sum()
     )
 
     st.metric(
@@ -122,7 +122,7 @@ with col4:
 
 with col5:
     overall_cac = (
-        filtered_df['Cost'].sum()
+        filtered_df['Cost_(INR)'].sum()
         / filtered_df['Total_converts'].sum()
     )
 
@@ -231,10 +231,10 @@ fig_content = px.bar(
 st.plotly_chart(fig_content, use_container_width=True)
 
 # -----------------------------
-# COST VS Total_Sales_Premiums_(INR)
+# Cost_(INR) VS Total_Sales_Premiums_(INR)
 # -----------------------------
 
-st.subheader("Cost vs Premium Analysis")
+st.subheader("Cost_(INR) vs Premium Analysis")
 
 fig_scatter = px.scatter(
     filtered_df,
@@ -243,7 +243,7 @@ fig_scatter = px.scatter(
     size="Total_converts",
     color="Product",
     hover_name="Influencer_name",
-    title="Campaign Cost vs Total_Sales_Premiums_(INR)"
+    title="Campaign Cost_(INR) vs Total_Sales_Premiums_(INR)"
 )
 
 st.plotly_chart(fig_scatter, use_container_width=True)
