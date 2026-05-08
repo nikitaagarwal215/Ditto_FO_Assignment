@@ -50,7 +50,7 @@ def load_data():
     # ROI
 
     # CREATE CAC
-    df["CAC"] = df["Cost"] / df["Conversions"]
+    # df["CAC"] = df["Cost"] / df["Conversions"]
 
     # HANDLE DIVIDE BY ZERO
     df["CAC"] = df["CAC"].replace([float("inf")], 0)
@@ -106,7 +106,7 @@ with col2:
 with col3:
     portfolio_roi = (
         (filtered_df['Premiums'].sum() - filtered_df['Cost'].sum())
-        / filtered_df['Cost'].sum()
+       # / filtered_df['Cost'].sum()
     )
 
     st.metric(
@@ -138,7 +138,7 @@ with col5:
 st.subheader("Product Performance")
 
 product_summary = filtered_df.groupby("Product").agg({
-    "Cost": "sum",
+# "Cost": "sum",
     "Premiums": "sum",
     "Conversions": "sum"
 }).reset_index()
@@ -171,7 +171,7 @@ st.plotly_chart(fig_product, use_container_width=True)
 st.subheader("Top Performing Influencers")
 
 influencer_summary = filtered_df.groupby("Influencer").agg({
-    "Cost": "sum",
+#   "Cost": "sum",
     "Premiums": "sum",
     "Conversions": "sum"
 }).reset_index()
@@ -212,7 +212,7 @@ st.dataframe(influencer_summary.tail(10))
 st.subheader("Content Type Performance")
 
 content_summary = filtered_df.groupby("Content_Type").agg({
-    "Cost": "sum",
+#    "Cost": "sum",
     "Premiums": "sum"
 }).reset_index()
 
@@ -238,7 +238,7 @@ st.subheader("Cost vs Premium Analysis")
 
 fig_scatter = px.scatter(
     filtered_df,
-    x="Cost",
+#    x="Cost",
     y="Premiums",
     size="Conversions",
     color="Product",
