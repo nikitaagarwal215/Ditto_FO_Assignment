@@ -212,7 +212,7 @@ st.dataframe(influencer_summary.tail(10))
 st.subheader("Content Type Performance")
 
 content_summary = filtered_df.groupby("Content_Type").agg({
-#    "Cost_(INR)": "sum",
+"Cost_(INR)": "sum",
     "Total_Sales_Premiums_(INR)": "sum"
 }).reset_index()
 
@@ -238,7 +238,7 @@ st.subheader("Cost_(INR) vs Premium Analysis")
 
 fig_scatter = px.scatter(
     filtered_df,
-#    x="Cost_(INR)",
+x="Cost_(INR)",
     y="Total_Sales_Premiums_(INR)",
     size="Total_converts",
     color="Product",
