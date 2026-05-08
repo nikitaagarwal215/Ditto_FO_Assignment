@@ -74,8 +74,8 @@ product_filter = st.sidebar.multiselect(
 
 content_filter = st.sidebar.multiselect(
     "Select Content Type",
-    options=Content_type.unique(),
-    default=Content_type.unique()
+    options=df["Content_type"].unique(),
+    default=df["Content_type"].unique()
 )
 
 filtered_df = df[
