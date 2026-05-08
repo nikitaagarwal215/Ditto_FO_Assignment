@@ -171,7 +171,7 @@ st.plotly_chart(fig_product, use_container_width=True)
 st.subheader("Top Performing Influencers")
 
 influencer_summary = filtered_df.groupby("Influencer_name").agg({
-#   "Cost_(INR)": "sum",
+ "Cost_(INR)": "sum",
     "Total_Sales_Premiums_(INR)": "sum",
     "Total_converts": "sum"
 }).reset_index()
