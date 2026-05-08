@@ -138,7 +138,7 @@ with col5:
 st.subheader("Product Performance")
 
 product_summary = filtered_df.groupby("Product").agg({
-# "Cost_(INR)": "sum",
+"Cost_(INR)": "sum",
     "Total_Sales_Premiums_(INR)": "sum",
     "Total_converts": "sum"
 }).reset_index()
