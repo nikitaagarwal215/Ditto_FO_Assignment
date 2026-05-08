@@ -74,13 +74,13 @@ product_filter = st.sidebar.multiselect(
 
 content_filter = st.sidebar.multiselect(
     "Select Content Type",
-    options=df["Content_Type"].unique(),
-    default=df["Content_Type"].unique()
+    options=Content_type.unique(),
+    default=Content_type.unique()
 )
 
 filtered_df = df[
     (df["Product"].isin(product_filter)) &
-    (df["Content_Type"].isin(content_filter))
+    (Content_type.isin(content_filter))
 ]
 
 # -----------------------------
