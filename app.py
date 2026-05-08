@@ -50,10 +50,10 @@ def load_data():
     # ROI
 
     # CREATE CAC
-    # df["CAC"] = df["Cost"] / df["Conversions"]
+    # df["CAC"] = df["Cost_(INR)"] / df["Conversions"]
 
     # HANDLE DIVIDE BY ZERO
-    df["CAC"] = df["CAC"].replace([float("inf")], 0)
+    # df["CAC"] = df["CAC"].replace([float("inf")], 0)
 
     return df
 
@@ -138,18 +138,18 @@ with col5:
 st.subheader("Product Performance")
 
 product_summary = filtered_df.groupby("Product").agg({
-# "Cost": "sum",
+# "Cost_(INR)": "sum",
     "Premiums": "sum",
     "Conversions": "sum"
 }).reset_index()
 
 product_summary["ROI"] = (
-    (product_summary["Premiums"] - product_summary["Cost"])
-    / product_summary["Cost"]
+    (product_summary["Premiums"] - product_summary["Cost_(INR)"])
+    / product_summary["Cost_(INR)"]
 )
 
 product_summary["CAC"] = (
-    product_summary["Cost"]
+    product_summary["Cost_(INR)"]
     / product_summary["Conversions"]
 )
 
@@ -171,14 +171,14 @@ st.plotly_chart(fig_product, use_container_width=True)
 st.subheader("Top Performing Influencers")
 
 influencer_summary = filtered_df.groupby("Influencer").agg({
-#   "Cost": "sum",
+#   "Cost_(INR)": "sum",
     "Premiums": "sum",
     "Conversions": "sum"
 }).reset_index()
 
 influencer_summary["ROI"] = (
-    (influencer_summary["Premiums"] - influencer_summary["Cost"])
-    / influencer_summary["Cost"]
+    (influencer_summary["Premiums"] - influencer_summary["Cost_(INR)"])
+    / influencer_summary["Cost_(INR)"]
 )
 
 influencer_summary = influencer_summary.sort_values(
@@ -212,13 +212,13 @@ st.dataframe(influencer_summary.tail(10))
 st.subheader("Content Type Performance")
 
 content_summary = filtered_df.groupby("Content_Type").agg({
-#    "Cost": "sum",
+#    "Cost_(INR)": "sum",
     "Premiums": "sum"
 }).reset_index()
 
 content_summary["ROI"] = (
-    (content_summary["Premiums"] - content_summary["Cost"])
-    / content_summary["Cost"]
+    (content_summary["Premiums"] - content_summary["Cost_(INR)"])
+    / content_summary["Cost_(INR)"]
 )
 
 fig_content = px.bar(
@@ -238,7 +238,7 @@ st.subheader("Cost vs Premium Analysis")
 
 fig_scatter = px.scatter(
     filtered_df,
-#    x="Cost",
+#    x="Cost_(INR)",
     y="Premiums",
     size="Conversions",
     color="Product",
