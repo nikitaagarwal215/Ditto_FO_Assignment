@@ -23,7 +23,7 @@ st.markdown("Founder’s Office | Influencer Growth Engine")
 def load_data():
 
     df = pd.read_excel("Influencer_Campaigns.xlsx")
-
+st.write(df.columns)
     # VIEW COLUMN NAMES
     st.write("Dataset Columns:", df.columns.tolist())
 
