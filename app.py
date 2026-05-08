@@ -170,7 +170,7 @@ st.plotly_chart(fig_product, use_container_width=True)
 
 st.subheader("Top Performing Influencers")
 
-influencer_summary = filtered_df.groupby("Influencer").agg({
+influencer_summary = filtered_df.groupby("Influencer_name").agg({
 #   "Cost_(INR)": "sum",
     "Premiums": "sum",
     "Conversions": "sum"
@@ -190,7 +190,7 @@ st.dataframe(influencer_summary.head(10))
 
 fig_top = px.bar(
     influencer_summary.head(10),
-    x="Influencer",
+    x="Influencer_name",
     y="ROI",
     title="Top 10 Influencers by ROI"
 )
@@ -242,7 +242,7 @@ fig_scatter = px.scatter(
     y="Premiums",
     size="Conversions",
     color="Product",
-    hover_name="Influencer",
+    hover_name="Influencer_name",
     title="Campaign Cost vs Premiums"
 )
 
@@ -255,7 +255,7 @@ st.plotly_chart(fig_scatter, use_container_width=True)
 st.subheader("Repeat Creator Analysis")
 
 repeat_creators = filtered_df.groupby(
-    "Influencer"
+    "Influencer_name"
 ).size().reset_index(name="Campaign_Count")
 
 fig_repeat = px.histogram(
