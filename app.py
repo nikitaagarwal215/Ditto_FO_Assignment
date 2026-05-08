@@ -23,9 +23,9 @@ st.markdown("Founder’s Office | Influencer Growth Engine")
 def load_data():
 
     df = pd.read_excel("Influencer_Campaigns.xlsx")
-    st.write(df.columns)
+    
     # VIEW COLUMN NAMES
-    st.write("Dataset Columns:", df.columns.tolist())
+    
 
     # CLEAN COLUMN NAMES
     df.columns = [col.strip().replace(" ", "_") for col in df.columns]
@@ -45,12 +45,12 @@ def load_data():
     # Cost
     # Leads
     # Quality_Lead_Pct
-    # Conversions
-    # Premiums
+    # Total_converts
+    # Total_Sales_Premiums_(INR)
     # ROI
 
     # CREATE CAC
-    # df["CAC"] = df["Cost_(INR)"] / df["Conversions"]
+    # df["CAC"] = df["Cost_(INR)"] / df["Total_converts"]
 
     # HANDLE DIVIDE BY ZERO
     # df["CAC"] = df["CAC"].replace([float("inf")], 0)
@@ -99,13 +99,13 @@ with col1:
 
 with col2:
     st.metric(
-        "Total Premiums",
-        f"₹{filtered_df['Premiums'].sum():,.0f}"
+        "Total_Sales_Premiums_(INR)",
+        f"₹{filtered_df['Total_Sales_Premiums_(INR)'].sum():,.0f}"
     )
 
 with col3:
     portfolio_roi = (
-        (filtered_df['Premiums'].sum() - filtered_df['Cost'].sum())
+        (filtered_df['Total_Sales_Premiums_(INR)'].sum() - filtered_df['Cost'].sum())
        # / filtered_df['Cost'].sum()
     )
 
@@ -116,14 +116,14 @@ with col3:
 
 with col4:
     st.metric(
-        "Conversions",
-        int(filtered_df['Conversions'].sum())
+        "Total_converts",
+        int(filtered_df['Total_converts'].sum())
     )
 
 with col5:
     overall_cac = (
         filtered_df['Cost'].sum()
-        / filtered_df['Conversions'].sum()
+        / filtered_df['Total_converts'].sum()
     )
 
     st.metric(
@@ -139,18 +139,18 @@ st.subheader("Product Performance")
 
 product_summary = filtered_df.groupby("Product").agg({
 # "Cost_(INR)": "sum",
-    "Premiums": "sum",
-    "Conversions": "sum"
+    "Total_Sales_Premiums_(INR)": "sum",
+    "Total_converts": "sum"
 }).reset_index()
 
 product_summary["ROI"] = (
-    (product_summary["Premiums"] - product_summary["Cost_(INR)"])
+    (product_summary["Total_Sales_Premiums_(INR)"] - product_summary["Cost_(INR)"])
     / product_summary["Cost_(INR)"]
 )
 
 product_summary["CAC"] = (
     product_summary["Cost_(INR)"]
-    / product_summary["Conversions"]
+    / product_summary["Total_converts"]
 )
 
 st.dataframe(product_summary)
@@ -172,12 +172,12 @@ st.subheader("Top Performing Influencers")
 
 influencer_summary = filtered_df.groupby("Influencer_name").agg({
 #   "Cost_(INR)": "sum",
-    "Premiums": "sum",
-    "Conversions": "sum"
+    "Total_Sales_Premiums_(INR)": "sum",
+    "Total_converts": "sum"
 }).reset_index()
 
 influencer_summary["ROI"] = (
-    (influencer_summary["Premiums"] - influencer_summary["Cost_(INR)"])
+    (influencer_summary["Total_Sales_Premiums_(INR)"] - influencer_summary["Cost_(INR)"])
     / influencer_summary["Cost_(INR)"]
 )
 
@@ -213,11 +213,11 @@ st.subheader("Content Type Performance")
 
 content_summary = filtered_df.groupby("Content_Type").agg({
 #    "Cost_(INR)": "sum",
-    "Premiums": "sum"
+    "Total_Sales_Premiums_(INR)": "sum"
 }).reset_index()
 
 content_summary["ROI"] = (
-    (content_summary["Premiums"] - content_summary["Cost_(INR)"])
+    (content_summary["Total_Sales_Premiums_(INR)"] - content_summary["Cost_(INR)"])
     / content_summary["Cost_(INR)"]
 )
 
@@ -231,7 +231,7 @@ fig_content = px.bar(
 st.plotly_chart(fig_content, use_container_width=True)
 
 # -----------------------------
-# COST VS PREMIUMS
+# COST VS Total_Sales_Premiums_(INR)
 # -----------------------------
 
 st.subheader("Cost vs Premium Analysis")
@@ -239,11 +239,11 @@ st.subheader("Cost vs Premium Analysis")
 fig_scatter = px.scatter(
     filtered_df,
 #    x="Cost_(INR)",
-    y="Premiums",
-    size="Conversions",
+    y="Total_Sales_Premiums_(INR)",
+    size="Total_converts",
     color="Product",
     hover_name="Influencer_name",
-    title="Campaign Cost vs Premiums"
+    title="Campaign Cost vs Total_Sales_Premiums_(INR)"
 )
 
 st.plotly_chart(fig_scatter, use_container_width=True)
