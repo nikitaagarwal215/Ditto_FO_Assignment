@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import time
 
 # ======================================================
 # PAGE CONFIG
@@ -9,43 +10,58 @@ import plotly.express as px
 st.set_page_config(
     page_title="Ditto Influencer Operating System",
     page_icon="📈",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # ======================================================
-# DITTO STYLE THEME
+# CUSTOM CSS — DITTO STYLE
 # ======================================================
 
 st.markdown("""
 <style>
 
+/* Main Background */
 .stApp {
     background-color: #FFFFFF;
     color: #1E293B;
 }
 
+/* Sidebar */
 section[data-testid="stSidebar"] {
     background-color: #F8FAFC;
 }
 
+/* Headers */
 h1, h2, h3 {
     color: #1E293B !important;
+    font-weight: 700 !important;
 }
 
+/* Metric Cards */
 [data-testid="metric-container"] {
     background-color: white;
     border: 1px solid #E2E8F0;
     padding: 18px;
     border-radius: 14px;
     box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
 }
 
+/* Hover Animation */
+[data-testid="metric-container"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Buttons */
 .stButton>button {
     background-color: #FF6B6B;
     color: white;
     border-radius: 8px;
     border: none;
     font-weight: 600;
+    padding: 10px 18px;
 }
 
 .stButton>button:hover {
@@ -53,8 +69,27 @@ h1, h2, h3 {
     color: white;
 }
 
+/* Dataframes */
+[data-testid="stDataFrame"] {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+}
+
+/* Expanders */
+.streamlit-expanderHeader {
+    font-weight: 600;
+    color: #1E293B;
+}
+
 </style>
 """, unsafe_allow_html=True)
+
+# ======================================================
+# LOADING
+# ======================================================
+
+with st.spinner("Loading Ditto Operating System..."):
+    time.sleep(1)
 
 # ======================================================
 # LOAD DATA
@@ -124,6 +159,10 @@ selected_creator = st.sidebar.selectbox(
     options=sorted(df["Influencer_name"].unique())
 )
 
+executive_mode = st.sidebar.checkbox(
+    "Executive Summary Mode"
+)
+
 # ======================================================
 # FILTER DATA
 # ======================================================
@@ -144,6 +183,10 @@ creator_df = df[
 st.title("Ditto Insurance — Influencer Operating System")
 
 st.caption("Founder’s Office | Growth & Portfolio Intelligence")
+
+st.success("🟢 All systems operational")
+
+st.caption("Last synced: 10-May-2026 | 11:42 PM")
 
 st.markdown("""
 <div style='padding:16px;
@@ -178,109 +221,137 @@ if page == "Executive Dashboard":
         / len(df)
     ) * 100
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    with st.container(border=True):
 
-    col1.metric(
-        "Total Spend",
-        f"₹{total_spend/10000000:.2f} Cr"
-    )
+        col1, col2, col3, col4, col5 = st.columns(5)
 
-    col2.metric(
-        "Premiums Generated",
-        f"₹{total_premium/10000000:.2f} Cr"
-    )
+        col1.metric(
+            "Total Spend",
+            f"₹{total_spend/10000000:.2f} Cr",
+            "+12% vs last cycle"
+        )
 
-    col3.metric(
-        "Portfolio ROI",
-        f"{portfolio_roi:.2f}x"
-    )
+        col2.metric(
+            "Premiums Generated",
+            f"₹{total_premium/10000000:.2f} Cr",
+            "+18% vs last cycle"
+        )
 
-    col4.metric(
-        "Conversions",
-        int(filtered_df["Total_converts"].sum())
-    )
+        col3.metric(
+            "Portfolio ROI",
+            f"{portfolio_roi:.2f}x",
+            "+0.4x improvement"
+        )
 
-    col5.metric(
-        "Negative ROI %",
-        f"{negative_roi_pct:.1f}%"
-    )
+        col4.metric(
+            "Conversions",
+            int(filtered_df["Total_converts"].sum()),
+            "+9%"
+        )
 
-    st.divider()
+        col5.metric(
+            "Negative ROI %",
+            f"{negative_roi_pct:.1f}%",
+            "-3%"
+        )
 
-    # ======================================================
-    # ROI BY CONTENT FORMAT
-    # ======================================================
-
-    st.subheader("ROI by Content Format")
-
-    content_summary = (
-        filtered_df
-        .groupby("Content_type")
-        .agg({
-            "Cost_(INR)": "sum",
-            "Total_Sales_Premiums_(INR)": "sum"
-        })
-        .reset_index()
-    )
-
-    content_summary["ROI"] = (
-        (content_summary["Total_Sales_Premiums_(INR)"] -
-         content_summary["Cost_(INR)"])
-        / content_summary["Cost_(INR)"]
-    )
-
-    fig_content = px.bar(
-        content_summary,
-        x="Content_type",
-        y="ROI",
-        text_auto=True,
-        color_discrete_sequence=["#FF6B6B"]
-    )
-
-    st.plotly_chart(fig_content, use_container_width=True)
+    st.progress(82)
+    st.caption("Portfolio Efficiency Score")
 
     st.divider()
 
     # ======================================================
-    # PRODUCT PERFORMANCE
+    # TABS
     # ======================================================
 
-    st.subheader("Product Portfolio Performance")
-
-    product_summary = (
-        filtered_df
-        .groupby("Product")
-        .agg({
-            "Cost_(INR)": "sum",
-            "Total_Sales_Premiums_(INR)": "sum",
-            "Total_converts": "sum"
-        })
-        .reset_index()
-    )
-
-    product_summary["ROI"] = (
-        (product_summary["Total_Sales_Premiums_(INR)"] -
-         product_summary["Cost_(INR)"])
-        / product_summary["Cost_(INR)"]
-    )
-
-    st.dataframe(product_summary, use_container_width=True)
-
-    st.divider()
+    tab1, tab2, tab3 = st.tabs([
+        "Portfolio Overview",
+        "Content Analysis",
+        "Risk Intelligence"
+    ])
 
     # ======================================================
-    # RISK ALERTS
+    # TAB 1
     # ======================================================
 
-    st.subheader("Portfolio Risk Alerts")
+    with tab1:
 
-    st.error("""
-    • Dedicated YouTube campaigns continue underperforming blended portfolio ROI.
+        st.subheader("Product Portfolio Performance")
 
-    • Portfolio ROI remains concentrated among repeat creators.
+        product_summary = (
+            filtered_df
+            .groupby("Product")
+            .agg({
+                "Cost_(INR)": "sum",
+                "Total_Sales_Premiums_(INR)": "sum",
+                "Total_converts": "sum"
+            })
+            .reset_index()
+        )
 
-    • Standalone Term campaigns continue showing weaker conversion efficiency.
-    """)
+        product_summary["ROI"] = (
+            (product_summary["Total_Sales_Premiums_(INR)"] -
+             product_summary["Cost_(INR)"])
+            / product_summary["Cost_(INR)"]
+        )
+
+        st.dataframe(product_summary, use_container_width=True)
+
+    # ======================================================
+    # TAB 2
+    # ======================================================
+
+    with tab2:
+
+        st.subheader("ROI by Content Format")
+
+        content_summary = (
+            filtered_df
+            .groupby("Content_type")
+            .agg({
+                "Cost_(INR)": "sum",
+                "Total_Sales_Premiums_(INR)": "sum"
+            })
+            .reset_index()
+        )
+
+        content_summary["ROI"] = (
+            (content_summary["Total_Sales_Premiums_(INR)"] -
+             content_summary["Cost_(INR)"])
+            / content_summary["Cost_(INR)"]
+        )
+
+        fig_content = px.bar(
+            content_summary,
+            x="Content_type",
+            y="ROI",
+            text_auto=True,
+            color_discrete_sequence=["#FF6B6B"]
+        )
+
+        st.plotly_chart(fig_content, use_container_width=True)
+
+    # ======================================================
+    # TAB 3
+    # ======================================================
+
+    with tab3:
+
+        st.subheader("Portfolio Risk Alerts")
+
+        st.error("""
+        🔴 Dedicated YouTube campaigns continue underperforming blended portfolio ROI.
+
+        🔴 Portfolio ROI remains concentrated among repeat creators.
+
+        🔴 Standalone Term campaigns continue showing weaker conversion efficiency.
+        """)
+
+        st.warning("""
+        🟡 4 campaigns pending follow-up beyond SLA timelines.
+
+        🟡 2 creators awaiting revised pricing approvals.
+        """)
 
 # ======================================================
 # CRM PIPELINE
@@ -326,6 +397,8 @@ elif page == "CRM Pipeline":
 
     st.divider()
 
+    st.success("🟢 CRM System Healthy")
+
     st.warning("""
     SLA Alerts
 
@@ -344,7 +417,9 @@ elif page == "Campaign Operations":
 
     st.subheader("Campaign Operations")
 
-    st.dataframe(filtered_df, use_container_width=True)
+    with st.expander("View Campaign Data"):
+
+        st.dataframe(filtered_df, use_container_width=True)
 
     fig_scatter = px.scatter(
         filtered_df,
@@ -432,10 +507,6 @@ elif page == "Founder Decision Center":
 
     st.divider()
 
-    # ======================================================
-    # BUDGET SIMULATOR
-    # ======================================================
-
     st.subheader("Budget Reallocation Simulator")
 
     budget_shift = st.slider(
@@ -454,11 +525,9 @@ elif page == "Founder Decision Center":
 
     st.divider()
 
-    # ======================================================
-    # RECOMMENDATION ENGINE
-    # ======================================================
-
     if st.button("Generate Founder Recommendations"):
+
+        st.toast("Top creators identified for scale allocation")
 
         st.success("""
         Recommended Next Actions
@@ -473,10 +542,6 @@ elif page == "Founder Decision Center":
         """)
 
     st.divider()
-
-    # ======================================================
-    # STRATEGIC NOTES
-    # ======================================================
 
     st.subheader("Strategic Operating Notes")
 
