@@ -13,6 +13,70 @@ st.set_page_config(
 )
 
 # ======================================================
+# CUSTOM STYLING
+# ======================================================
+
+st.markdown("""
+<style>
+
+/* Main App */
+.stApp {
+    background-color: #FFFFFF;
+    color: #1F2937;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #F7F8FC;
+}
+
+/* Sidebar Headers */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #1F2937;
+}
+
+/* Metric Cards */
+[data-testid="metric-container"] {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.04);
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: #1F2937 !important;
+    font-weight: 700 !important;
+}
+
+/* Buttons */
+.stButton>button {
+    background-color: #F45B5B;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 10px 18px;
+    font-weight: 600;
+}
+
+.stButton>button:hover {
+    background-color: #E64949;
+    color: white;
+}
+
+/* Tables */
+[data-testid="stDataFrame"] {
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ======================================================
 # LOAD DATA
 # ======================================================
 
@@ -47,7 +111,7 @@ def load_data():
 df = load_data()
 
 # ======================================================
-# SIDEBAR FILTERS
+# SIDEBAR
 # ======================================================
 
 st.sidebar.title("Dashboard Filters")
@@ -74,6 +138,10 @@ roi_filter = st.sidebar.slider(
 selected_creator = st.sidebar.selectbox(
     "Creator Drilldown",
     options=sorted(df["Influencer_name"].unique())
+)
+
+executive_mode = st.sidebar.checkbox(
+    "Executive Summary Mode"
 )
 
 # ======================================================
@@ -103,6 +171,17 @@ st.caption(
 st.caption(
     "Last Updated: 10-May-2026"
 )
+
+st.markdown("""
+<div style='padding:14px;
+background-color:#EEF2FF;
+border-radius:12px;
+margin-bottom:20px;'>
+
+<b>Objective:</b> Build a lightweight influencer operating system that improves attribution visibility, campaign decision-making, workflow accountability, and portfolio-level visibility while reducing founder dependency.
+
+</div>
+""", unsafe_allow_html=True)
 
 # ======================================================
 # KPI SECTION
@@ -151,13 +230,18 @@ col5.metric(
     f"{negative_roi_pct:.1f}%"
 )
 
+st.caption(f"""
+Showing:
+{len(filtered_df)} campaigns |
+{len(filtered_df['Influencer_name'].unique())} creators |
+Minimum ROI filter: {roi_filter:.2f}
+""")
+
 st.divider()
 
 # ======================================================
 # EXECUTIVE INSIGHTS
 # ======================================================
-
-st.subheader("Executive Insights")
 
 best_format = (
     filtered_df
@@ -180,6 +264,8 @@ best_product = (
     .idxmax()
 )
 
+st.subheader("Executive Insights")
+
 st.info(f"""
 • Best Performing Format: {best_format}
 
@@ -189,7 +275,7 @@ st.info(f"""
 
 • Portfolio ROI remains concentrated among repeat creators with trust-led audiences.
 
-• LinkedIn and bundled insurance campaigns continue to materially outperform blended portfolio averages.
+• LinkedIn and bundled insurance campaigns continue to outperform blended portfolio averages.
 """)
 
 st.divider()
@@ -225,6 +311,7 @@ fig_content = px.bar(
     x="Content_type",
     y="ROI",
     text="ROI",
+    color_discrete_sequence=["#F45B5B"],
     hover_data=[
         "Cost_(INR)",
         "Total_Sales_Premiums_(INR)"
@@ -273,10 +360,10 @@ st.dataframe(
 st.divider()
 
 # ======================================================
-# CREATOR PORTFOLIO REVIEW
+# CREATOR PERFORMANCE INTELLIGENCE
 # ======================================================
 
-st.subheader("Creator Portfolio Review")
+st.subheader("Creator Performance Intelligence")
 
 creator_summary = (
     filtered_df
@@ -307,6 +394,16 @@ creator_summary["Recommendation"] = (
         "SCALE" if x >= 3 else
         "CUT" if x < 1 else
         "HOLD / TEST"
+    )
+)
+
+creator_summary["Health_Status"] = (
+    creator_summary["ROI"]
+    .apply(
+        lambda x:
+        "Healthy" if x >= 3 else
+        "Escalation Needed" if x < 1 else
+        "At Risk"
     )
 )
 
@@ -341,7 +438,8 @@ with col1:
         x="Influencer_name",
         y="ROI",
         color="Recommendation",
-        text="ROI"
+        text="ROI",
+        color_discrete_sequence=["#16A34A"]
     )
 
     st.plotly_chart(
@@ -362,7 +460,8 @@ with col2:
         x="Influencer_name",
         y="ROI",
         color="Recommendation",
-        text="ROI"
+        text="ROI",
+        color_discrete_sequence=["#DC2626"]
     )
 
     st.plotly_chart(
@@ -429,6 +528,11 @@ fig_scatter = px.scatter(
     hover_data=[
         "Calculated_ROI",
         "Content_type"
+    ],
+    color_discrete_sequence=[
+        "#F45B5B",
+        "#6366F1",
+        "#16A34A"
     ]
 )
 
@@ -456,7 +560,8 @@ repeat_creators = (
 
 fig_repeat = px.histogram(
     repeat_creators,
-    x="Campaign_Count"
+    x="Campaign_Count",
+    color_discrete_sequence=["#F45B5B"]
 )
 
 st.plotly_chart(
@@ -465,6 +570,20 @@ st.plotly_chart(
 )
 
 st.divider()
+
+# ======================================================
+# PORTFOLIO RISK ALERTS
+# ======================================================
+
+st.error("""
+### Portfolio Risk Alerts
+
+• Portfolio ROI remains concentrated among a small cluster of repeat creators.
+
+• Dedicated YouTube continues to underperform blended portfolio ROI.
+
+• Standalone Term campaigns show weaker conversion efficiency relative to bundled products.
+""")
 
 # ======================================================
 # FOUNDER ACTION PANEL
@@ -483,10 +602,56 @@ st.warning("""
 """)
 
 # ======================================================
-# RECOMMENDED ACTIONS
+# BUDGET REALLOCATION SIMULATOR
 # ======================================================
 
-st.subheader("Recommended Actions")
+st.subheader("Budget Reallocation Simulator")
+
+budget_shift = st.slider(
+    "Shift Budget Toward Top Creators (%)",
+    0,
+    50,
+    20
+)
+
+projected_roi = portfolio_roi + (budget_shift * 0.03)
+
+st.success(f"""
+Projected portfolio ROI after reallocating budget toward top creators:
+
+{projected_roi:.2f}x
+""")
+
+# ======================================================
+# FOUNDER RECOMMENDATION GENERATOR
+# ======================================================
+
+st.subheader("Founder Recommendation Generator")
+
+if st.button("Generate Founder Recommendations"):
+
+    st.success(f"""
+### Recommended Next Actions
+
+• Increase allocation toward LinkedIn and bundled insurance campaigns.
+
+• Scale creators:
+{', '.join(creator_summary.head(3)['Influencer_name'].tolist())}
+
+• Reduce exposure to low-efficiency creators and dedicated YouTube inventory.
+
+• Prioritize repeat creators with strong conversion efficiency over new creator expansion.
+
+• Improve attribution discipline before materially increasing total acquisition spend.
+""")
+
+st.divider()
+
+# ======================================================
+# RECOMMENDED PORTFOLIO ACTIONS
+# ======================================================
+
+st.subheader("Recommended Portfolio Actions")
 
 scale_creators = creator_summary[
     creator_summary["Recommendation"] == "SCALE"
@@ -521,10 +686,10 @@ Weak ROI efficiency, inconsistent conversions, or elevated CAC.
 st.divider()
 
 # ======================================================
-# FOUNDER’S OFFICE NOTES
+# STRATEGIC OPERATING NOTES
 # ======================================================
 
-st.subheader("Founder’s Office Notes")
+st.subheader("Strategic Operating Notes")
 
 st.markdown("""
 ### Key Strategic Learnings
