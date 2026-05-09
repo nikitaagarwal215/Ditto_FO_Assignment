@@ -1,53 +1,64 @@
 import pandas as pd
-    • Scale bundled Health + Term creators
-    """)
+import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+import time
 
-    st.divider()
+# ======================================================
+# PAGE CONFIG
+# ======================================================
 
-    st.subheader("Budget Reallocation Simulator")
+st.set_page_config(
+    page_title="Ditto Influencer Operating System",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-    budget_shift = st.slider(
-        "Increase Top Creator Budget (%)",
-        0,
-        50,
-        20
-    )
+# ======================================================
+# CUSTOM CSS
+# ======================================================
 
-    projected_roi = 3.2 + (budget_shift * 0.03)
+st.markdown("""
+<style>
 
-    st.metric(
-        "Projected ROI",
-        f"{projected_roi:.2f}x"
-    )
+.stApp {
+    background-color: #FFFFFF;
+    color: #1E293B;
+}
 
-    st.divider()
+section[data-testid="stSidebar"] {
+    background-color: #F8FAFC;
+}
 
-    if st.button("Generate Founder Recommendations"):
+h1, h2, h3 {
+    color: #1E293B !important;
+    font-weight: 700 !important;
+}
 
-        st.toast("Top creators identified for scale allocation")
+[data-testid="metric-container"] {
+    background-color: white;
+    border: 1px solid #E2E8F0;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+}
 
-        st.success("""
-        Recommended Next Actions
+[data-testid="metric-container"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
+}
 
-        • Increase allocation toward LinkedIn creators.
+.stButton>button {
+    background-color: #FF6B6B;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    padding: 10px 18px;
+}
 
-        • Reduce low efficiency creator spend.
-
-        • Expand bundled insurance campaigns.
-
-        • Improve SLA tracking before scaling outreach.
-        """)
-
-    st.divider()
-
-    st.subheader("Strategic Operating Notes")
-
-    st.info("""
-    • LinkedIn creators continue delivering strongest blended ROI.
-
-    • Repeat creators materially outperform one-off activations.
-
-    • Attribution consistency remains the biggest operational bottleneck.
-
-    • Dedicated YouTube should be treated selectively as awareness inventory.
+.stButton>button:hover {
+    background-color: #F45B5B;
     """)
