@@ -40,7 +40,7 @@ def load_data():
     # Influencer
     # Campaign_ID
     # Start_Date
-    # Content_Type
+    # Content_type
     # Product
     # Cost_(INR)
     # Leads
@@ -73,7 +73,7 @@ product_filter = st.sidebar.multiselect(
 )
 
 content_filter = st.sidebar.multiselect(
-    "Select Content Type",
+    "Select Content type",
     options=df["Content_type"].unique(),
     default=df["Content_type"].unique()
 )
@@ -211,7 +211,7 @@ st.dataframe(influencer_summary.tail(10))
 
 st.subheader("Content Type Performance")
 
-content_summary = filtered_df.groupby("Content_Type").agg({
+content_summary = filtered_df.groupby("Content_type").agg({
 "Cost_(INR)": "sum",
     "Total_Sales_Premiums_(INR)": "sum"
 }).reset_index()
@@ -223,7 +223,7 @@ content_summary["ROI"] = (
 
 fig_content = px.bar(
     content_summary,
-    x="Content_Type",
+    x="Content_type",
     y="ROI",
     title="ROI by Content Type"
 )
