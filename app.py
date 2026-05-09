@@ -1,12 +1,6 @@
-
-
-
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-import networkx as nx
-from pyvis.network import Network
-import streamlit.components.v1 as components
 
 # ======================================================
 # PAGE CONFIG
@@ -73,16 +67,19 @@ def load_data():
 
     df.columns = [c.strip().replace(" ", "_") for c in df.columns]
 
+    # ROI
     df["Calculated_ROI"] = (
         (df["Total_Sales_Premiums_(INR)"] - df["Cost_(INR)"])
         / df["Cost_(INR)"]
     )
 
+    # CAC
     df["CAC"] = (
         df["Cost_(INR)"]
         / df["Total_converts"]
     )
 
+    # Conversion Rate
     df["Conversion_Rate"] = (
         df["Total_converts"]
         / df["Leads"]
@@ -106,7 +103,6 @@ page = st.sidebar.radio(
         "CRM Pipeline",
         "Campaign Operations",
         "Creator Intelligence",
-        "Attribution Engine",
         "Founder Decision Center"
     ]
 )
@@ -155,7 +151,7 @@ background-color:#FFF1F2;
 border-radius:12px;
 margin-bottom:20px;'>
 
-<b>Objective:</b> Build a lightweight influencer operating system that improves attribution visibility, workflow accountability, portfolio decision-making, and founder-level visibility.
+<b>Objective:</b> Build a lightweight influencer operating system that improves attribution visibility, workflow accountability, campaign execution, and portfolio-level decision making while reducing founder dependency.
 
 </div>
 """, unsafe_allow_html=True)
@@ -211,6 +207,10 @@ if page == "Executive Dashboard":
 
     st.divider()
 
+    # ======================================================
+    # ROI BY CONTENT FORMAT
+    # ======================================================
+
     st.subheader("ROI by Content Format")
 
     content_summary = (
@@ -241,14 +241,45 @@ if page == "Executive Dashboard":
 
     st.divider()
 
+    # ======================================================
+    # PRODUCT PERFORMANCE
+    # ======================================================
+
+    st.subheader("Product Portfolio Performance")
+
+    product_summary = (
+        filtered_df
+        .groupby("Product")
+        .agg({
+            "Cost_(INR)": "sum",
+            "Total_Sales_Premiums_(INR)": "sum",
+            "Total_converts": "sum"
+        })
+        .reset_index()
+    )
+
+    product_summary["ROI"] = (
+        (product_summary["Total_Sales_Premiums_(INR)"] -
+         product_summary["Cost_(INR)"])
+        / product_summary["Cost_(INR)"]
+    )
+
+    st.dataframe(product_summary, use_container_width=True)
+
+    st.divider()
+
+    # ======================================================
+    # RISK ALERTS
+    # ======================================================
+
     st.subheader("Portfolio Risk Alerts")
 
     st.error("""
-    • Dedicated YouTube continues underperforming blended portfolio ROI.
+    • Dedicated YouTube campaigns continue underperforming blended portfolio ROI.
 
-    • Portfolio ROI remains concentrated among a small group of repeat creators.
+    • Portfolio ROI remains concentrated among repeat creators.
 
-    • Standalone Term campaigns continue to show weaker conversion efficiency.
+    • Standalone Term campaigns continue showing weaker conversion efficiency.
     """)
 
 # ======================================================
@@ -380,50 +411,6 @@ elif page == "Creator Intelligence":
     )
 
 # ======================================================
-# ATTRIBUTION ENGINE
-# ======================================================
-
-elif page == "Attribution Engine":
-
-    st.subheader("CRM Relationship Network")
-
-    G = nx.Graph()
-
-    for _, row in filtered_df.iterrows():
-
-        influencer = row["Influencer_name"]
-        product = row["Product"]
-        content = row["Content_type"]
-
-        G.add_node(influencer)
-        G.add_node(product)
-        G.add_node(content)
-
-        G.add_edge(influencer, product)
-        G.add_edge(influencer, content)
-
-    net = Network(
-        height="600px",
-        width="100%",
-        bgcolor="#FFFFFF",
-        font_color="#1E293B"
-    )
-
-    net.from_nx(G)
-
-    net.save_graph("network.html")
-
-    HtmlFile = open(
-        "network.html",
-        'r',
-        encoding='utf-8'
-    )
-
-    source_code = HtmlFile.read()
-
-    components.html(source_code, height=650)
-
-# ======================================================
 # FOUNDER DECISION CENTER
 # ======================================================
 
@@ -445,6 +432,10 @@ elif page == "Founder Decision Center":
 
     st.divider()
 
+    # ======================================================
+    # BUDGET SIMULATOR
+    # ======================================================
+
     st.subheader("Budget Reallocation Simulator")
 
     budget_shift = st.slider(
@@ -463,6 +454,10 @@ elif page == "Founder Decision Center":
 
     st.divider()
 
+    # ======================================================
+    # RECOMMENDATION ENGINE
+    # ======================================================
+
     if st.button("Generate Founder Recommendations"):
 
         st.success("""
@@ -479,10 +474,14 @@ elif page == "Founder Decision Center":
 
     st.divider()
 
+    # ======================================================
+    # STRATEGIC NOTES
+    # ======================================================
+
     st.subheader("Strategic Operating Notes")
 
     st.info("""
-    • LinkedIn creators continue delivering strongest ROI.
+    • LinkedIn creators continue delivering strongest blended ROI.
 
     • Repeat creators materially outperform one-off activations.
 
