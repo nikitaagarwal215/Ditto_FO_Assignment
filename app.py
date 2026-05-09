@@ -1,6 +1,6 @@
-# Final Complete app.py
 
-```python
+
+
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -490,4 +490,3 @@ elif page == "Founder Decision Center":
 
     • Dedicated YouTube should be treated selectively as awareness inventory.
     """)
-```
